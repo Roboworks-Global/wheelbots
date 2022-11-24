@@ -4,3 +4,6 @@
 [submodule "rosbot_navigation"]
 	path = rosbot_navigation
 	url = git@bitbucket.org:roboworkscode/rosbot_navigation.git
+[submodule "rosbot_perception"]
+	path = rosbot_perception
+	url = git@bitbucket.org:roboworkscode/rosbot_perception.git
