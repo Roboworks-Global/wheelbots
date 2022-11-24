@@ -11,7 +11,9 @@ dist/
 *.class
 
 # Compiled Python bytecode
+__pycache__/
 *.py[cod]
+*$py.class
 
 # Log files
 *.log
@@ -48,3 +50,9 @@ Thumbs.db
 *.mov
 *.wmv
 
+# ROS2 Artifact files
+build/
+install/
+log/
+
+.vscode/
