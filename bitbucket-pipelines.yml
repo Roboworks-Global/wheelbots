@@ -1,0 +1,19 @@
+image: ros:galactic
+options:
+  max-time: 5  # Pipeline will fail after 5 minutes
+
+definitions:
+  steps:
+    - step: &build
+        name: 'Build and Test Package'
+        script:
+          - source /opt/ros/galactic/setup.bash
+          - git submodule update --init --recursive
+          - colcon build --symlink-install
+          - colcon test
+          - colcon test-result --verbose
+
+pipelines:
+  pull-requests:
+    "**":
+    - step: *build
