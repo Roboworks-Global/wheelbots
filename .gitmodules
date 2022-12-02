@@ -1,6 +1,3 @@
-[submodule "rosbot_cartographer"]
-	path = rosbot_cartographer
-	url = git@bitbucket.org:roboworkscode/rosbot_cartographer.git
 [submodule "rosbot_navigation"]
 	path = rosbot_navigation
 	url = git@bitbucket.org:roboworkscode/rosbot_navigation.git
