@@ -1,9 +1,12 @@
 [submodule "rosbot_navigation"]
 	path = rosbot_navigation
 	url = git@bitbucket.org:roboworkscode/rosbot_navigation.git
+	branch = develop
 [submodule "rosbot_perception"]
 	path = rosbot_perception
 	url = git@bitbucket.org:roboworkscode/rosbot_perception.git
+	branch = develop
 [submodule "rosbot_description"]
 	path = rosbot_description
 	url = git@bitbucket.org:roboworkscode/rosbot_description.git
+	branch = develop
