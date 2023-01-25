@@ -20,4 +20,5 @@
 	branch = develop
 [submodule "rosbot_slam"]
 	path = rosbot_slam
-	url = git@bitbucket.org-daryl-roboworks:roboworkscode/rosbot_slam.git
+	url = git@bitbucket.org:roboworkscode/rosbot_slam.git
+	branch = develop
