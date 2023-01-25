@@ -14,3 +14,7 @@
 	path = rosbot_node
 	url = git@bitbucket.org:roboworkscode/rosbot_node.git
 	branch = develop
+[submodule "rosbot_utils"]
+	path = rosbot_utils
+	url = git@bitbucket.org:roboworkscode/rosbot_utils.git
+	branch = develop
