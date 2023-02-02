@@ -75,53 +75,75 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<p align="center">
+  <a href="https://www.roboworks.net/store-homepage">
+  <img src="images/rosbot-plus.png" alt="Logo" width="240" height="240">
+  </a>
+</p>
 
 The Rosbot is ...
 
+### Packages
+The following packages are currently provided and maintained to provide basic functionality to the Rosbot:
+
+- https://bitbucket.org/roboworkscode/rosbot_node/
+- https://bitbucket.org/roboworkscode/rosbot_drivers/
+- https://bitbucket.org/roboworkscode/rosbot_description/
+- https://bitbucket.org/roboworkscode/rosbot_perception/
+- https://bitbucket.org/roboworkscode/rosbot_slam/
+- https://bitbucket.org/roboworkscode/rosbot_navigation/
+- https://bitbucket.org/roboworkscode/rosbot_utils/
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-### Built With
-
-This project depends on the following packages
-* [![ROS][ros]][ros-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-
 ### Prerequisites
 
-The Rosbot is built on the ROS framework
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+The packages in this repository is built on the ROS2 framework. The Robot Operating System (ROS) is a set of software libraries and tools for building robot applications. Please refer to the following URL and install ROS2 galactic and tools.
+- https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html
+- https://docs.ros.org/en/galactic/Tutorials/Colcon-Tutorial.html
+- https://docs.ros.org/en/galactic/How-To-Guides/Building-a-Custom-Debian-Package.html
+
+Ceratin packages also require specific dependencies, please refer to the individual READMEs for each package.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Installation
 
-1. Set up SSH keys
+1. Set up SSH keys on Bitbucket
 2. Clone the repo into your workspace src directory
    ```sh
+   mkdir ~/rosbot_workspace ~/rosbot_workspace/src
+   cd ~/rosbot_workspace/src
    git clone git@bitbucket.org:roboworkscode/rosbot.git --recurse-submodules
    ```
 3. Build the packages
    ```sh
-   colcon build --symlink-install
+   cd ~/rosbot_workspace
+   colcon build
    ```
 4. Source the install
    ```sh
    . install/setup.sh
    ```
+
+5. Your workspace should look like the following
+  ```
+  ~/rosbot_workspace/
+  └─ build/
+  └─ log/
+  └─ install/
+      └─ setup.bash
+      └─ ...
+  └─ src/
+      └─ rosbot/
+          └─ rosbot_node/
+          └─ rosbot_description/
+          └─ ...
+  ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -130,9 +152,12 @@ The Rosbot is built on the ROS framework
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+To launch a package use the following command:
+```sh
+  ros2 launch <package name> <launch file>
+```
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Debugging
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -149,7 +174,14 @@ TODO
 <!-- LICENSE -->
 ## License
 
-TODO
+Copyright 2023 Roboworks Pty Ltd
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -200,7 +232,6 @@ Use this space to list resources you find helpful and would like to give credit 
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/rosbot-plus.png
 
 [ros]: https://img.shields.io/ros/v/galactic/rclcpp
 [ros-url]: https://docs.ros.org/en/galactic/index.html
