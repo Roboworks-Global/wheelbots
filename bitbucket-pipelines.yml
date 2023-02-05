@@ -1,4 +1,4 @@
-image: ros:galactic
+image: osrf/ros:galactic-desktop
 options:
   max-time: 5  # Pipeline will fail after 5 minutes
 
@@ -7,11 +7,17 @@ definitions:
     - step: &build
         name: 'Build and Test Package'
         script:
+          - apt-get -y update && apt-get install -y openssh-client
           - source /opt/ros/galactic/setup.bash
           - git submodule update --init --recursive
           - colcon build --symlink-install
           - colcon test
           - colcon test-result --verbose
+            artifacts:
+          - build/**
+          - log/**
+          - install/**
+          - docs/**
 
 pipelines:
   pull-requests:
