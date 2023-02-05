@@ -10,7 +10,7 @@ definitions:
           - apt-get -y update && apt-get install -y openssh-client
           - source /opt/ros/galactic/setup.bash
           - git submodule update --init --recursive
-          - colcon build --symlink-install
+          - colcon build --continue-on-error
           - colcon test
           - colcon test-result --verbose
         artifacts:
