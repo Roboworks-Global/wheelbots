@@ -13,7 +13,7 @@ definitions:
           - colcon build --symlink-install
           - colcon test
           - colcon test-result --verbose
-            artifacts:
+        artifacts:
           - build/**
           - log/**
           - install/**
