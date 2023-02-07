@@ -9,7 +9,7 @@ definitions:
         script:
           - apt-get -y update && apt-get install -y openssh-client
           - source /opt/ros/galactic/setup.bash
-          - git submodule update --init --recursive
+          - git submodule update --init --recursive --remote
           - rosdep update --rosdistro=galactic
           - rosdep install --from-paths . --ignore-src --rosdistro galactic -y -r
           - colcon build --continue-on-error
