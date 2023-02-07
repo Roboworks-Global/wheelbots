@@ -10,7 +10,8 @@ definitions:
           - apt-get -y update && apt-get install -y openssh-client
           - source /opt/ros/galactic/setup.bash
           - git submodule update --init --recursive
-          - rosdep update && rosdep install --from-paths . --ignore-src --rosdistro galactic -y -r
+          - rosdep update --rosdistro=galactic
+          - rosdep install --from-paths . --ignore-src --rosdistro galactic -y -r
           - colcon build --continue-on-error
           - colcon test
           - colcon test-result --verbose
