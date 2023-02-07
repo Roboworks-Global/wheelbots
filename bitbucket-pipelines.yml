@@ -11,6 +11,7 @@ definitions:
           - source /opt/ros/galactic/setup.bash
           - git submodule update --init --recursive
           - colcon build --continue-on-error
+          - rosdep install --from-paths . --ignore-src --rosdistro galactic -y -r
           - colcon test
           - colcon test-result --verbose
         artifacts:
