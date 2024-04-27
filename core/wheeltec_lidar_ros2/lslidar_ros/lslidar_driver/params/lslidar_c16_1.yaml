@@ -1,0 +1,25 @@
+/c16_left/lslidar_driver_node:
+  ros__parameters:
+    packet_size: 1206                  # 雷达数据包长度(字节)，填1212/1206
+    device_ip: 192.168.1.200
+    msop_port: 2368
+    difop_port: 2369
+    frame_id: laser_link
+    add_multicast: false
+    group_ip: 224.1.1.2
+    use_gps_ts: false
+    lidar_type: c16                         #c16表示机械式16线雷达；c32表示机械式32线雷达
+    c16_type: c16_2                         #c16_2表示16线垂直角度分辨率为2度的雷达，c16_1表示16线垂直角度分辨率为1.33度的雷达
+    c32_type: c32_2                         #c32_2表示32线垂直角度分辨率为1度的雷达，c32_1表示32线垂直角度分辨率为0.33度的雷达
+    c32_fpga_type: 3                        #3表示32线fpga为2.7\2.8\3.0的版本的雷达，2表示32线fpga为2.6的版本的雷达
+    min_range: 0.3
+    max_range: 200.0
+    distance_unit: 0.25
+    angle_disable_min: 0
+    angle_disable_max: 0
+    scan_num: 15
+    topic_name: lslidar_point_cloud
+    publish_scan: false
+    pcl_type: false
+    coordinate_opt: false
+    #pcap: /home/chris/Documents/leishen/1212bytes_c32/C32_220714_1801.pcap                        #pcap包路径，加载pcap包时打开此注释
