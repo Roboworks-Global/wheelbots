@@ -1,0 +1,9 @@
+ <root main_tree_to_execute = "MainTree" >
+     <BehaviorTree ID="MainTree">
+        <Sequence name="root_sequence">
+            <FindColouredBox   name="find_coloured_box" box_colour="{box_colour}" box_pickup_position="{box_pickup_position}"/>
+            <ApproachColouredBox    name="approach_coloured_box"  box_pickup_position="{box_pickup_position}"/>
+            <PickColouredBox name="pick_coloured_box" box_colour="{box_colour}" />
+        </Sequence>
+     </BehaviorTree>
+ </root>

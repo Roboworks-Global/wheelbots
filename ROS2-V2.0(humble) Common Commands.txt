@@ -1,0 +1,66 @@
+NFS Mounting
+sudo mount -t nfs 192.168.0.100:/home/wheeltec/wheeltec_ros2/ /mnt
+
+1. Open the robot chassis
+ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
+
+2. Open chassis control
+ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
+
+3. Open the camera
+ros2 launch turn_on_wheeltec_robot wheeltec_camera.launch.py
+
+4. Turn on radar
+ros2 launch turn_on_wheeltec_robot wheeltec_lidar.launch.py
+
+5. Open keyboard control
+ros2 run wheeltec_robot_keyboard wheeltec_keyboard
+
+6. Simple follow function
+① Radar following
+ros2 launch simple_follower_ros2 laser_follower.launch.py
+
+② Visual line patrol
+ros2 launch simple_follower_ros2 line_follower.launch.py
+
+③Visual tracking
+ros2 launch simple_follower_ros2 visual_follower.launch.py
+
+7. 2D mapping
+① Use gmapping to build a map
+ros2 launch slam_gmapping slam_gmapping.launch.py
+
+②Use slam_toolbox to build a map
+ros2 launch wheeltec_slam_toolbox online_async_launch.py
+
+③Use cartographer to build maps
+ros2 launch wheeltec_cartographer cartographer.launch.py
+
+save map
+ros2 launch wheeltec_nav2 save_map.launch.py
+
+8. 2D navigation
+ros2 launch wheeltec_nav2 wheeltec_nav2.launch.py
+
+10. RTAB-MAP mapping
+ros2 launch wheeltec_robot_rtab wheeltec_slam_rtab.launch.py
+
+
+12. WEB browser displays camera
+step1: open the camera
+ros2 launch turn_on_wheeltec_robot wheeltec_camera.launch.py
+step2:
+ros2 run web_video_server web_video_server
+
+13. USB handle control
+ros2 launch wheeltec_joy wheeltec_joy.launch.py
+
+14. Open rviz2
+Note: Use a virtual machine to open rviz2
+
+15. Compile the function package separately:
+If only compile turn_on_wheeltec_robot
+colcon build --packages-select turn_on_wheeltec_robot
+Compile all function packages
+colcon build
+Note: After users modify the contents of the launch file, they need to be compiled to take effect.

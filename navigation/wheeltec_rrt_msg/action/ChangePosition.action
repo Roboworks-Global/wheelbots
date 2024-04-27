@@ -1,0 +1,10 @@
+#goal definition
+float64 desired_x
+float64 desired_y
+---
+#result definition
+bool is_complete
+---
+#feedback
+float64 current_x
+float64 current_y
