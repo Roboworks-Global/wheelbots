@@ -1,9 +1,8 @@
-#include <rclcpp/rclcpp.hpp>
-#include <ackermann_msgs/msg/ackermann_drive_stamped.hpp> // CHANGE
-#include <geometry_msgs/msg/vector3.hpp>
-
 #include "turn_on_wheeltec_robot/wheeltec_robot.h"
+#include "rclcpp/rclcpp.hpp"
 #include "turn_on_wheeltec_robot/Quaternion_Solution.h"
+#include "ackermann_msgs/msg/ackermann_drive_stamped.hpp"     // CHANGE
+#include "wheeltec_robot_msg/msg/data.hpp"     // CHANGE
 
 //sensor_msgs::Imu Mpu6050;//Instantiate an IMU object //实例化IMU对象 
 sensor_msgs::msg::Imu Mpu6050;
@@ -101,6 +100,7 @@ void turn_on_robot::Akm_Cmd_Vel_Callback(const ackermann_msgs::msg::AckermannDri
 //void turn_on_robot::Cmd_Vel_Callback(const ackermann_msgs::msg::AckermannDriveStamped::SharedPtr akm_ctl) 
 void turn_on_robot::Cmd_Vel_Callback(const geometry_msgs::msg::Twist::SharedPtr twist_aux)
 {
+  RCLCPP_INFO(this->get_logger(),"I heard %f", twist_aux->linear.x); 
   short  transition;  //intermediate variable //中间变量
   //if(akm_cmd_vel=="none") {RCLCPP_INFO(this->get_logger(),"not akm");} //Prompt message //提示信息
   Send_Data.tx[0]=FRAME_HEADER; //frame head 0x7B //帧头0X7BAkm_Cmd_Vel_Sub
@@ -139,6 +139,47 @@ void turn_on_robot::Cmd_Vel_Callback(const geometry_msgs::msg::Twist::SharedPtr 
   catch (serial::IOException& e)   
   {
     RCLCPP_ERROR(this->get_logger(),("Unable to send data through serial port")); //If sending data fails, an error message is printed //如果发送数据失败，打印错误信息
+  }
+}
+
+void turn_on_robot::joint_states_Callback(const sensor_msgs::msg::JointState::SharedPtr joint_states)
+{
+  short  transition;  //中间变量 
+  Send_Data.tx[0]=FRAME_HEADER_ARM;//帧头 固定值
+
+  //关节A
+  transition=0;
+  transition = joint_states->position[0]*1000; //将浮点数放大一千倍，简化传输
+  //ROS_INFO("%x",arm_joint.position[0]); 
+  Send_Data.tx[2] = transition;     //取数据的低8位
+  Send_Data.tx[1] = transition>>8;  //取数据的高8位
+  
+  //关节B
+  transition=0;
+  transition = joint_states->position[1]*1000; //将浮点数放大一千倍，简化传输
+  Send_Data.tx[4] = transition;     //取数据的低8位
+  Send_Data.tx[3] = transition>>8;  //取数据的高8位
+
+  //关节C
+  transition=0;
+  transition = joint_states->position[2]*1000; //将浮点数放大一千倍，简化传输
+  Send_Data.tx[6] = transition;     //取数据的低8位
+  Send_Data.tx[5] = transition>>8;  //取数据的高8位
+ 
+  //机械爪
+  transition=0;
+  transition = joint_states->position[6]*1000; //将浮点数放大一千倍，简化传输
+  Send_Data.tx[8] = transition;     //取数据的低8位
+  Send_Data.tx[7] = transition>>8;  //取数据的高8位
+
+  Send_Data.tx[9]=Check_Sum(9,SEND_DATA_CHECK);//帧尾校验位，规则参见Check_Sum函数
+  Send_Data.tx[10]=FRAME_TAIL_ARM;  //数据的最后一位是帧尾（固定值）
+
+  try {
+    Stm32_Serial.write(Send_Data.tx,sizeof (Send_Data.tx)); //向串口发数据
+  }
+  catch (serial::IOException& e) {
+    RCLCPP_ERROR(this->get_logger(),("Unable to send data through serial port")); //如果发送数据失败，打印错误信息
   }
 }
 
@@ -190,8 +231,8 @@ void turn_on_robot::Publish_Odom()
     q.setRPY(0,0,Robot_Pos.Z);
     geometry_msgs::msg::Quaternion odom_quat=tf2::toMsg(q);
 
-    geometry_msgs::msg::Vector3 robotpose;
-    geometry_msgs::msg::Vector3 robotvel;
+    wheeltec_robot_msg::msg::Data robotpose;
+    wheeltec_robot_msg::msg::Data robotvel;
     nav_msgs::msg::Odometry odom; //Instance the odometer topic data //实例化里程计话题数据
 
     odom.header.stamp = rclcpp::Node::now(); 
@@ -470,10 +511,10 @@ turn_on_robot::turn_on_robot()
   voltage_publisher = create_publisher<std_msgs::msg::Float32>("PowerVoltage", 1);
   //voltage_timer = create_wall_timer(1s/100, [=]() { Publish_Voltage(); });    
   //tf_pub_ = this->create_publisher<tf2_msgs::msg::TFMessage>("tf", 10);
-  robotpose_publisher = create_publisher<geometry_msgs::msg::Vector3>("robotpose", 10);
+  robotpose_publisher = create_publisher<wheeltec_robot_msg::msg::Data>("robotpose", 10);
   //robotpose_timer = create_wall_timer(1s/50, [=]() { Publish_Odom(); });
 
-  robotvel_publisher = create_publisher<geometry_msgs::msg::Vector3>("robotvel", 10);
+  robotvel_publisher = create_publisher<wheeltec_robot_msg::msg::Data>("robotvel", 10);
   //robotvel_timer = create_wall_timer(1s/50, [=]() { Publish_Odom(); });
   tf_bro = std::make_shared<tf2_ros::TransformBroadcaster>(this);
 
@@ -482,6 +523,9 @@ turn_on_robot::turn_on_robot()
 
   Akm_Cmd_Vel_Sub = create_subscription<ackermann_msgs::msg::AckermannDriveStamped>(
       akm_cmd_vel, 2, std::bind(&turn_on_robot::Akm_Cmd_Vel_Callback, this, _1));
+
+  joint_states_sub = create_subscription<sensor_msgs::msg::JointState>(
+      "Arm_2_JointStates", 2, std::bind(&turn_on_robot::joint_states_Callback, this, _1));
   
   try
   { 
