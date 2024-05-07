@@ -78,11 +78,8 @@
   </a>
 </p>
 
-The Mecabot is an educational and research robot based on ROS (Robot Operating System) for robotic researchers, educators, students and developers.
+The Rosbot is both ideal for ROS beginner or experienced developer. The key components of Rosbot can be tailored towards your needs and budgets. The entire package is flexible and practical. Customers can switch between ROS 1 or ROS 2 easily. The main control unit can be based on Jetson or X86. Onboard sensors include depth camera and LiDAR. Available accessories can range from light-weight robotic arms, LCD displays to larger battery packs. Each Rosbot comes with free tutorials backed by ROS communities around the globe. Rosbot is your welcome ticket to the world of ROS developers.
 
-Mecabot is equipped with builtin ROS Controller, LiDAR, Depth Camera, STM32 Motor/Power/IMU Controller and metal chassis with omnidirectional mecanum wheels.
-
-Mecabot is ideal for ROS beginners with affordable price, compact design and ready-to-go package. Mecabot is also a solid Autonomous Mobile Robot (AMR) platform for robotic education and research projects.
 
 ### Technical Specifications
 - ROS Controller: Jetson Orin Nano or Orin NX
@@ -91,24 +88,23 @@ Mecabot is ideal for ROS beginners with affordable price, compact design and rea
 - iOS/Android Apps
 
 ### Dimensions
-- Height: 153mm
-- Width: 407mm
-- Length: 410.5mm
-- 
-- Weight: 6.1kg
+- Length: 44.5cm
+- Width: 35.8cm
+- Height: 15cm
+- Weight: 6kg
 
 ### Power Supply
 - 22.2V 5000mAh battery
 - 2A DC Charger
-- 6.5 hours battery life (without loading)
-- 5.5 hours battery life (with 3kg loading)
+- 8 hours battery life (without loading)
 
 ### Motor Specifications
 - MD36N 35W DC Brushed Motor
 - 1:27 Reduction Ratio
 - Wheel diameter: 100mm
 - Max. Payload: 15kg
-- Max. Speed: 1.2 m/s
+- Max. Speed: 1.3 m/s
+- S20F Servo Motor
 
 ### I/O Interfaces
 - CAN

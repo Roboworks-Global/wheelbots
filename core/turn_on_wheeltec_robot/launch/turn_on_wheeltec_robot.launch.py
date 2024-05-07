@@ -24,7 +24,7 @@ def generate_launch_description():
             
     wheeltec_robot = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'base_serial.launch.py')),
-            launch_arguments={'akmcar': 'false'}.items(),
+            launch_arguments={'akmcar': 'true'}.items(),
     )
     #choose your car,the default car is mini_mec 
     choose_car = IncludeLaunchDescription(
