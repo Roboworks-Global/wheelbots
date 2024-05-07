@@ -78,7 +78,7 @@
   </a>
 </p>
 
-The Rosbot is both ideal for ROS beginner or experienced developer. The key components of Rosbot can be tailored towards your needs and budgets. The entire package is flexible and practical. Customers can switch between ROS 1 or ROS 2 easily. The main control unit can be based on Jetson or X86. Onboard sensors include depth camera and LiDAR. Available accessories can range from light-weight robotic arms, LCD displays to larger battery packs. Each Rosbot comes with free tutorials backed by ROS communities around the globe. Rosbot is your welcome ticket to the world of ROS developers.
+The Rosbot Pro is an ideal AGV platform for Autonomous Mobile Robot projects. With built-in ROS controller, LiDAR and Depth Camera, Rosbot Pro saves time and money for rapid prototyping or product development. Its battery life can go up to 4 hours with no load or 2.5 hours with full load. This is a serious professional AGV platform to be integrated with field robots and service robots both for indoor or outdoor environment. It can carry up to 35 kg payload and climb up to 30 degree slope. Rosbot Pro is one of the most agile AGV platforms that can carry out big jobs at low cost.
 
 
 ### Technical Specifications
@@ -88,23 +88,15 @@ The Rosbot is both ideal for ROS beginner or experienced developer. The key comp
 - iOS/Android Apps
 
 ### Dimensions
-- Length: 44.5cm
-- Width: 35.8cm
-- Height: 15cm
-- Weight: 6kg
+TODO
 
 ### Power Supply
 - 22.2V 5000mAh battery
 - 2A DC Charger
-- 8 hours battery life (without loading)
+- 4 hours battery life (without loading)
 
 ### Motor Specifications
-- MD36N 35W DC Brushed Motor
-- 1:27 Reduction Ratio
-- Wheel diameter: 100mm
-- Max. Payload: 15kg
-- Max. Speed: 1.3 m/s
-- S20F Servo Motor
+TODO
 
 ### I/O Interfaces
 - CAN
