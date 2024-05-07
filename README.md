@@ -78,9 +78,45 @@
   </a>
 </p>
 
-The Rosbot is ...
+The Mecabot is an educational and research robot based on ROS (Robot Operating System) for robotic researchers, educators, students and developers.
+
+Mecabot is equipped with builtin ROS Controller, LiDAR, Depth Camera, STM32 Motor/Power/IMU Controller and metal chassis with omnidirectional mecanum wheels.
+
+Mecabot is ideal for ROS beginners with affordable price, compact design and ready-to-go package. Mecabot is also a solid Autonomous Mobile Robot (AMR) platform for robotic education and research projects.
 
 ### Technical Specifications
+- ROS Controller: Jetson Orin Nano or Orin NX
+- Leishen LSLiDAR
+- Orbbec Astra Camera
+- iOS/Android Apps
+
+### Dimensions
+- Height: 153mm
+- Width: 407mm
+- Length: 410.5mm
+- 
+- Weight: 6.1kg
+
+### Power Supply
+- 22.2V 5000mAh battery
+- 2A DC Charger
+- 6.5 hours battery life (without loading)
+- 5.5 hours battery life (with 3kg loading)
+
+### Motor Specifications
+- MD36N 35W DC Brushed Motor
+- 1:27 Reduction Ratio
+- Wheel diameter: 100mm
+- Max. Payload: 15kg
+- Max. Speed: 1.2 m/s
+
+### I/O Interfaces
+- CAN
+- Serial Ports
+- USB
+- HDMI
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
