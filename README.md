@@ -78,11 +78,13 @@
   </a>
 </p>
 
-The Mecabot Pro is an ideal Autonomous Mobile Robot (AMR) platform for robotic education, R&D projects and rapid prototyping. Mecabot Pro is equipped with builtin ROS Controller, LiDAR, Depth Camera, STM32 Motor/Power/IMU and metal chassis with solid rubber wheels.
+The Mecabot Plus is an ideal Autonomous Mobile Robot (AMR) platform for indoor service robot applications.
 
-Mecabot Pro saves time and money for rapid prototyping or product development. Its battery life can go up to 4 hours or 2.5 hours with full load. This is a serious professional AMR platform to be integrated into industrial and service robots both for indoor and outdoor applications. It can carry up to 35 kg payload and climb up to 30 degree slope.
+Mecabot Plus is equipped with builtin ROS Controller, LiDAR, Depth Camera, STM32 Motor/Power/IMU and metal chassis with 4 Mecanum Wheel and Independent Suspension Systems.
 
-Mecabot Pro is one of the most agile AMR platforms that can carry out big jobs at low cost.
+Mecabot Plus saves time and money for rapid prototyping or product development for indoor service robot projects. This is a serious professional AMR platform to be integrated into service robots especially for indoor environment such as factories, warehouses, hospitals, public transports, office buildings, hotels and restaurants.
+
+It can travel up to 1.39 km/h. Its mecanum wheels can allow Mecabot Plus travel in omnidirectional directions. Mecabot Plus can navigate in smaller indoor environment with greater flexibility. The max payload is 60 kg. Mecabot Plus is one of the most agile AMR platforms that can carry out big jobs at low cost.
 
 ### Technical Specifications
 - ROS Controller: Jetson Orin Nano or Orin NX
@@ -92,23 +94,23 @@ Mecabot Pro is one of the most agile AMR platforms that can carry out big jobs a
 - 4-Wheel Independent Suspension
 
 ### Dimensions
-- Height: 225.5mm
-- Width: 541mm
-- Length: 581mm
-- Weight: 10.8kg
+- Height: 248mm
+- Width: 636mm
+- Length: 554mm
+- Weight: 19kg
 
 ### Power Supply
 - 22.2V 5000mAh battery
 - 2A DC Charger
-- 6.5 hours battery life (without loading)
-- 5.5 hours battery life (with 3kg loading)
+- 3.5 hours battery life (without loading)
+- 2.8 hours battery life (with 3kg loading)
 
 ### Motor Specifications
-- MD36N 35W DC Brushed Motor
-- 1:27 Reduction Ratio
+- MD60 100W DC Brushed Motor
+- 1:18 Reduction Ratio
 - Wheel diameter: 152mm
-- Max. Payload: 20kg
-- Max. Speed: 1.83 m/s
+- Max. Payload: 60kg
+- Max. Speed: 1.32 m/s
 
 ### I/O Interfaces
 - CAN
