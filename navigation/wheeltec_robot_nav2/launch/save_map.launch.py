@@ -12,7 +12,7 @@ def generate_launch_description():
         package='nav2_map_server',
         executable='map_saver_cli',
         output='screen',
-        arguments=['-f', '/home/wheeltec/wheeltec_ros2/install/wheeltec_nav2/share/wheeltec_nav2/map/WHEELTEC'],
+        # arguments=['-f', '/home/wheeltec/wheeltec_ros2/install/wheeltec_nav2/share/wheeltec_nav2/map/WHEELTEC'],
         
         parameters=[{'save_map_timeout': 20000.0},
                     {'free_thresh_default': 0.196}]
