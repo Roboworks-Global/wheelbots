@@ -568,6 +568,6 @@ def generate_launch_description():
     #mini_tank,
     #mini_4wd,senior_4wd_bs_robot,senior_4wd_dl_robot,flagship_4wd_bs_robot,flagship_4wd_dl_robot,top_4wd_bs_robot,top_4wd_dl_robot
     #mini_diff, senior_diff_robot,four_wheel_diff_bs ,four_wheel_diff_dl, brushless_senior_diff,flagship_four_wheel_diff_bs_robot,flagship_four_wheel_diff_dl_robot
-    ld.add_action(senior_mec_bs)
+    ld.add_action(senior_mec_dl)
     return ld
 

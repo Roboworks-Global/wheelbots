@@ -78,24 +78,24 @@
   </a>
 </p>
 
-The Mecabot is an educational and research robot based on ROS (Robot Operating System) for robotic researchers, educators, students and developers.
+The Mecabot Pro is an ideal Autonomous Mobile Robot (AMR) platform for robotic education, R&D projects and rapid prototyping. Mecabot Pro is equipped with builtin ROS Controller, LiDAR, Depth Camera, STM32 Motor/Power/IMU and metal chassis with solid rubber wheels.
 
-Mecabot is equipped with builtin ROS Controller, LiDAR, Depth Camera, STM32 Motor/Power/IMU Controller and metal chassis with omnidirectional mecanum wheels.
+Mecabot Pro saves time and money for rapid prototyping or product development. Its battery life can go up to 4 hours or 2.5 hours with full load. This is a serious professional AMR platform to be integrated into industrial and service robots both for indoor and outdoor applications. It can carry up to 35 kg payload and climb up to 30 degree slope.
 
-Mecabot is ideal for ROS beginners with affordable price, compact design and ready-to-go package. Mecabot is also a solid Autonomous Mobile Robot (AMR) platform for robotic education and research projects.
+Mecabot Pro is one of the most agile AMR platforms that can carry out big jobs at low cost.
 
 ### Technical Specifications
 - ROS Controller: Jetson Orin Nano or Orin NX
 - Leishen LSLiDAR
 - Orbbec Astra Camera
 - iOS/Android Apps
+- 4-Wheel Independent Suspension
 
 ### Dimensions
-- Height: 153mm
-- Width: 407mm
-- Length: 410.5mm
-- 
-- Weight: 6.1kg
+- Height: 225.5mm
+- Width: 541mm
+- Length: 581mm
+- Weight: 10.8kg
 
 ### Power Supply
 - 22.2V 5000mAh battery
@@ -106,9 +106,9 @@ Mecabot is ideal for ROS beginners with affordable price, compact design and rea
 ### Motor Specifications
 - MD36N 35W DC Brushed Motor
 - 1:27 Reduction Ratio
-- Wheel diameter: 100mm
-- Max. Payload: 15kg
-- Max. Speed: 1.2 m/s
+- Wheel diameter: 152mm
+- Max. Payload: 20kg
+- Max. Speed: 1.83 m/s
 
 ### I/O Interfaces
 - CAN
