@@ -34,12 +34,12 @@
     <img src="images/roboworks-logo.png" alt="Logo" width="240" height="240">
   </a>
 
-  <h3 align="center">Roboworks Rosbot</h3>
+  <h3 align="center">Roboworks</h3>
 
   <p align="center">
-    This project contains all the packages neccessary to run the Rosbot!
+    This project contains all the packages neccessary to run Roboworks products
     <br />
-    <a href="https://bitbucket.org/roboworkscode/rosbot/"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Roboworks-Global/transbot"><strong>Explore the docs »</strong></a>
   </p>
 </div>
 
@@ -51,9 +51,6 @@
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
@@ -83,16 +80,7 @@
 
 The Rosbot is ...
 
-### Packages
-The following packages are currently provided and maintained to provide basic functionality to the Rosbot:
-
-- https://bitbucket.org/roboworkscode/rosbot_node/
-- https://bitbucket.org/roboworkscode/rosbot_drivers/
-- https://bitbucket.org/roboworkscode/rosbot_description/
-- https://bitbucket.org/roboworkscode/rosbot_perception/
-- https://bitbucket.org/roboworkscode/rosbot_slam/
-- https://bitbucket.org/roboworkscode/rosbot_navigation/
-- https://bitbucket.org/roboworkscode/rosbot_utils/
+### Technical Specifications
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -102,10 +90,10 @@ The following packages are currently provided and maintained to provide basic fu
 
 ### Prerequisites
 
-The packages in this repository is built on the ROS2 framework. The Robot Operating System (ROS) is a set of software libraries and tools for building robot applications. Please refer to the following URL and install ROS2 galactic and tools.
-- https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html
-- https://docs.ros.org/en/galactic/Tutorials/Colcon-Tutorial.html
-- https://docs.ros.org/en/galactic/How-To-Guides/Building-a-Custom-Debian-Package.html
+The packages in this repository is built on the ROS2 framework. The Robot Operating System (ROS) is a set of software libraries and tools for building robot applications. Please refer to the following URL and install ROS2 humble and tools.
+- https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html
+- https://docs.ros.org/en/humble/Tutorials/Colcon-Tutorial.html
+- https://docs.ros.org/en/humble/How-To-Guides/Building-a-Custom-Debian-Package.html
 
 Ceratin packages also require specific dependencies, please refer to the individual READMEs for each package.
 
@@ -113,41 +101,58 @@ Ceratin packages also require specific dependencies, please refer to the individ
 
 ### Installation
 
-1. Set up SSH keys on Bitbucket
+1. Set up SSH keys on Github
 2. Clone the repo into your workspace src directory
    ```sh
-   mkdir ~/rosbot_workspace ~/rosbot_workspace/src
-   cd ~/rosbot_workspace/src
-   git clone git@bitbucket.org:roboworkscode/rosbot.git --recurse-submodules
+   mkdir ~/ros2_ws ~/ros2_ws/src
+   cd ~/ros2_ws/src
+   git clone https://github.com/Roboworks-Global/transbot -b <robot_model>
+   ```
+2. Install dependencies
+   ```sh
+   cd ~/ros2_ws
+   rosdep install --ignore-src --from-path src/ -r -y
    ```
 3. Build the packages
    ```sh
-   cd ~/rosbot_workspace
-   colcon build
+   colcon build --symlink-install
    ```
 4. Source the install
    ```sh
-   . install/setup.sh
+   . install/setup.bash
    ```
 
 5. Your workspace should look like the following
   ```
-  ~/rosbot_workspace/
+  ~/ros2_ws/
   └─ build/
   └─ log/
   └─ install/
       └─ setup.bash
       └─ ...
   └─ src/
-      └─ rosbot/
-          └─ rosbot_node/
-          └─ rosbot_description/
+      └─ transbot/
+          └─ core/
+          └─ navigation/
           └─ ...
   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
+### Setup
+
+1. Run the following script to set up the serial devices:
+    ```sh
+    sudo chmod +x ./src/transbot/turn_on_wheeltec_robot/wheeltec_udev.sh
+    sudo ./src/transbot/turn_on_wheeltec_robot/wheeltec_udev.sh
+    ```
+
+2. Follow the README in the ros2_astra_camera package to set up the camera
+
+TODO
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -157,7 +162,18 @@ To launch a package use the following command:
   ros2 launch <package name> <launch file>
 ```
 
-### Debugging
+Example:
+```sh
+  ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
+```
+
+## Debugging
+
+Debugging tools are available in the ROS2 framework.
+- rqt
+- rviz
+
+TODO
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
