@@ -38,7 +38,7 @@ def generate_launch_description():
     #If you want to use the DWB algorithm, you can change the input parameters to wheeltec-dwb.yaml
     my_nav_dir = get_package_share_directory('wheeltec_nav2')
     my_param_dir = os.path.join(my_nav_dir, 'param')
-    my_param_file = 'param_top_akm_bs.yaml'
+    my_param_file = 'param_top_akm_dl.yaml'
     my_map_dir = os.path.join(my_nav_dir, 'map')
     my_map_file = 'WHEELTEC.yaml'
     

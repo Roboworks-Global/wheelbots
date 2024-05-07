@@ -78,7 +78,7 @@
   </a>
 </p>
 
-The Rosbot Pro is an ideal AGV platform for Autonomous Mobile Robot projects. With built-in ROS controller, LiDAR and Depth Camera, Rosbot Pro saves time and money for rapid prototyping or product development. Its battery life can go up to 4 hours with no load or 2.5 hours with full load. This is a serious professional AGV platform to be integrated with field robots and service robots both for indoor or outdoor environment. It can carry up to 35 kg payload and climb up to 30 degree slope. Rosbot Pro is one of the most agile AGV platforms that can carry out big jobs at low cost.
+The Rosbot Plus (Independent Suspension System) is an ideal AGV platform for outdoor Autonomous Mobile Robot projects. With built-in ROS controller, LiDAR and Depth Camera, Rosbot Plus saves time and money for rapid prototyping or product development. Its battery life can go up to 4 hours with no load or 2.5 hours with full load. This is a serious professional AGV platform to be integrated with field robots and service robots both for indoor or outdoor environment. It can carry up to 45 kg payload and climb up to 30 degree slope. Rosbot Plus is one of the most agile AGV platforms that can carry out big jobs at low cost.
 
 
 ### Technical Specifications
@@ -88,15 +88,17 @@ The Rosbot Pro is an ideal AGV platform for Autonomous Mobile Robot projects. Wi
 - iOS/Android Apps
 
 ### Dimensions
-TODO
+- Length: 76.6 cm
+- Width: 67.1 cm
+- Height: 31.9 cm
 
 ### Power Supply
 - 22.2V 5000mAh battery
 - 2A DC Charger
-- 4 hours battery life (without loading)
+- 2.5-4 hours battery life (without loading)
 
 ### Motor Specifications
-TODO
+- Max Payload 22 ~ 45 kg
 
 ### I/O Interfaces
 - CAN
