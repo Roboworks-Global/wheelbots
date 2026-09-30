@@ -24,6 +24,7 @@ __pycache__/
 # Maven
 target/
 dist/
+scott/
 
 # JetBrains IDE
 .idea/
