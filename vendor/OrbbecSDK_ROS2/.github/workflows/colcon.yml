@@ -1,0 +1,28 @@
+name: colcon
+
+on: [push, pull_request]
+
+jobs:
+  # build on Ubuntu docker images
+  build:
+    name: "${{ matrix.image }} (${{ matrix.ros }})"
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+            - {image: "ubuntu:22.04", ros: humble}
+            - {image: "ubuntu:24.04", ros: jazzy}
+
+    container:
+      image: ${{ matrix.image }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ros-tooling/setup-ros@v0.7
+
+      - uses: ros-tooling/action-ros-ci@v0.4
+        with:
+          target-ros2-distro: ${{ matrix.ros }}

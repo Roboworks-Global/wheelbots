@@ -20,7 +20,7 @@ def generate_launch_description():
           'approx_sync':False}]
 
     remappings=[
-          ('odom', '/odom_combined'),
+          ('odom', '/odometry/filtered'),
           ('rgb/image', '/camera/color/image_raw'),
           ('rgb/camera_info', '/camera/color/camera_info'),
           ('depth/image', '/camera/depth/image_rect_raw')]

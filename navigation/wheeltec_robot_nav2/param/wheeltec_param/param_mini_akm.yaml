@@ -20,13 +20,13 @@ amcl:
     max_beams: 60
     max_particles: 2000
     min_particles: 500
-    odom_frame_id: "odom_combined"
+    odom_frame_id: "odom"
     pf_err: 0.02
     pf_z: 0.85
     recovery_alpha_fast: 0.0
     recovery_alpha_slow: 0.0
     resample_interval: 2
-    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    robot_model_type: "nav2_amcl::OmniMotionModel"  # Ackermann: use Omni model; alphas above are already tuned for it
     save_pose_rate: 0.5
     sigma_hit: 0.02
     tf_broadcast: true
@@ -59,7 +59,7 @@ bt_navigator:
     use_sim_time: False
     global_frame: map
     robot_base_frame: base_footprint
-    odom_topic: /odom_combined
+    odom_topic: /odometry/filtered
     bt_loop_duration: 10
     default_server_timeout: 20
     enable_groot_monitoring: True
@@ -166,7 +166,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: odom_combined
+      global_frame: odom
       robot_base_frame: base_footprint
       use_sim_time: False
       rolling_window: true
@@ -274,7 +274,7 @@ planner_server:
       cost_travel_multiplier: 2.0         # For 2D: Cost multiplier to apply to search to steer away from high cost areas. Larger values will place in the center of aisles more exactly (if non-`FREE` cost potential field exists) but take slightly longer to compute. To optimize for speed, a value of 1.0 is reasonable. A reasonable tradeoff value is 2.0. A value of 0.0 effective disables steering away from obstacles and acts like a naive binary search A*.
       angle_quantization_bins: 64         # For Hybrid/Lattice nodes: Number of angle bins for search, must be 1 for 2D node (no angle search)
       analytic_expansion_ratio: 3.5       # For Hybrid/Lattice nodes: The ratio to attempt analytic expansions during search for final approach.
-      minimum_turning_radius: 0.35        # For Hybrid/Lattice nodes: minimum turning radius in m of path / vehicle
+      minimum_turning_radius: 0.35        # For Hybrid/Lattice nodes: minimum turning radius in m of path / vehicle. Current value assumes wheelbase 0.143 m + max steer ~22 deg; measure actual max steer and recompute as wheelbase / tan(max_steer_rad).
       reverse_penalty: 2.1                # For Reeds-Shepp model: penalty to apply if motion is reversing, must be => 1
       change_penalty: 0.15                # For Hybrid nodes: penalty to apply if motion is changing directions, must be >= 0
       non_straight_penalty: 1.50          # For Hybrid nodes: penalty to apply if motion is non-straight, must be => 1
@@ -303,7 +303,7 @@ recoveries_server:
       plugin: "nav2_recoveries/BackUp"
     wait:
       plugin: "nav2_recoveries/Wait"
-    global_frame: odom_combined
+    global_frame: odom
     robot_base_frame: base_footprint
     transform_timeout: 0.1
     use_sim_time: False

@@ -1,0 +1,662 @@
+#include "rclcpp/rclcpp.hpp"
+#include <orbbec_camera/ob_camera_node_driver.h>
+#include <orbbec_camera/utils.h>
+
+#include <chrono>
+#include <cstring>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <thread>
+
+using namespace ob;
+
+namespace {
+
+constexpr int kFirmwareLogDrainDelaySec = 5;
+
+void waitForFirmwareLogDrain(const rclcpp::Logger &logger) {
+  RCLCPP_INFO(logger, "Waiting %d seconds to keep firmware log alive...",
+              kFirmwareLogDrainDelaySec);
+  std::this_thread::sleep_for(std::chrono::seconds(kFirmwareLogDrainDelaySec));
+}
+
+bool isSdkLogEnabled(const std::string &log_level) {
+  return orbbec_camera::obLogSeverityFromString(log_level) != OBLogSeverity::OB_LOG_SEVERITY_OFF;
+}
+
+}  // namespace
+
+struct CliArgs {
+  enum class Operation {
+    NONE,
+    SET_IP,
+    FORCE_IP,
+    SET_DHCP_TIMEOUT,
+  };
+  bool help = false;
+  Operation operation = Operation::NONE;
+  bool dhcp = false;
+  bool dhcp_option_set = false;
+  bool persistent_ip = true;
+  bool persistent_ip_option_set = false;
+  int dhcp_assign_ip_timeout = -1;
+  bool dhcp_assign_ip_timeout_set = false;
+  std::string force_ip_mac;
+  std::string current_ip = "192.168.1.10";
+  int port = 8090;
+  std::string new_ip = "192.168.1.200";
+  std::string mask = "255.255.255.0";
+  std::string gateway = "192.168.1.1";
+  std::string sdk_log_level = "off";
+};
+
+bool parseIpString(const std::string &ip_str, uint8_t ip[4]) {
+  std::stringstream ss(ip_str);
+  std::string item;
+  int i = 0;
+  while (std::getline(ss, item, '.')) {
+    if (i >= 4) return false;
+    try {
+      int num = std::stoi(item);
+      if (num < 0 || num > 255) return false;
+      ip[i++] = static_cast<uint8_t>(num);
+    } catch (...) {
+      return false;
+    }
+  }
+  return i == 4;
+}
+
+bool parseBool(const std::string &value, bool &out) {
+  if (value == "true" || value == "1") {
+    out = true;
+    return true;
+  }
+  if (value == "false" || value == "0") {
+    out = false;
+    return true;
+  }
+  return false;
+}
+
+bool parseInt(const std::string &value, int &out) {
+  try {
+    size_t consumed = 0;
+    const int parsed = std::stoi(value, &consumed);
+    if (consumed != value.size()) {
+      return false;
+    }
+    out = parsed;
+    return true;
+  } catch (...) {
+    return false;
+  }
+}
+
+void printHelp() {
+  std::cout
+      << "Usage:\n"
+      << "  ros2 run orbbec_camera ip_config_tool --\\\n"
+      << "      <set_ip|force_ip|set_dhcp_timeout> [options]\n"
+      << "  ros2 run orbbec_camera ip_config_tool -- set_ip\\\n"
+      << "      [--current_ip <ip>] [--port <port>] [--enable_dhcp <true|false>]\\\n"
+      << "      [--enable_persistent_ip <true|false>]\\\n"
+      << "      [--new_ip <ip>] [--mask <ip>] [--gateway <ip>]\n"
+      << "  ros2 run orbbec_camera ip_config_tool -- force_ip --force_ip_mac <mac>\\\n"
+      << "      [--enable_dhcp <true|false>] [--new_ip <ip>] [--mask <ip>] [--gateway <ip>]\n"
+      << "  ros2 run orbbec_camera ip_config_tool -- set_dhcp_timeout\\\n"
+      << "      [--current_ip <ip>] [--port <port>] --timeout <seconds>\n"
+      << "      [--sdk_log_level debug]\n"
+      << "  (legacy alias: set_device_ip)\n\n"
+      << "Subcommands:\n"
+      << "  set_ip                     Configure DHCP and persistent IP by current device "
+         "address.\n"
+      << "  force_ip                   Force IP by MAC address.\n"
+      << "  set_dhcp_timeout           Configure DHCP address assignment timeout.\n\n"
+      << "Parameters:\n"
+      << "  --enable_dhcp <bool>       DHCP flag for set-ip/force-ip "
+         "(default: false).\n"
+      << "  --enable_persistent_ip <bool>\n"
+      << "                             Persistent IP flag for set-ip "
+         "(V2 independent flag, legacy requires mutual exclusion with DHCP).\n"
+      << "  --current_ip <ip>          Current device IP for set-ip/set_dhcp_timeout "
+         "(default: 192.168.1.10).\n"
+      << "  --port <port>              Device port for set-ip/set_dhcp_timeout "
+         "(default: 8090).\n"
+      << "  --new_ip <ip>              Persistent IP for set-ip/force-ip "
+         "(default: 192.168.1.200).\n"
+      << "  --mask <ip>                Subnet mask for set-ip/force-ip (default: 255.255.255.0).\n"
+      << "  --gateway <ip>             Gateway for set-ip/force-ip (default: 192.168.1.1).\n"
+      << "  --force_ip_mac <mac>       Target MAC for force-ip (required, e.g. "
+         "54:14:FD:06:07:DA).\n"
+      << "  --timeout <sec>            DHCP timeout in seconds for set_dhcp_timeout.\n"
+      << "  --dhcp_assign_ip_timeout <sec>\n"
+      << "                             Alias of --timeout.\n\n"
+      << "  --sdk_log_level LEVEL      SDK file log level: debug/info/warn/error/fatal/off "
+         "(default: off).\n\n"
+      << "Examples:\n"
+      << "\n"
+      << "  [Set IP]\n"
+      << "    Persistent only: ros2 run orbbec_camera ip_config_tool -- \\\n"
+      << "                     set_ip \\\n"
+      << "                     --current_ip 192.168.1.10 \\\n"
+      << "                     --enable_dhcp false \\\n"
+      << "                     --enable_persistent_ip true \\\n"
+      << "                     --new_ip 192.168.1.200 \\\n"
+      << "                     --mask 255.255.255.0 \\\n"
+      << "                     --gateway 192.168.1.1\n\n"
+      << "    DHCP only:       ros2 run orbbec_camera ip_config_tool -- \\\n"
+      << "                     set_ip \\\n"
+      << "                     --current_ip 192.168.1.10 \\\n"
+      << "                     --enable_dhcp true \\\n"
+      << "                     --enable_persistent_ip false\n\n"
+      << "    Both enabled:    ros2 run orbbec_camera ip_config_tool -- \\\n"
+      << "                     set_ip \\\n"
+      << "                     --current_ip 192.168.1.10 \\\n"
+      << "                     --enable_dhcp true \\\n"
+      << "                     --enable_persistent_ip true \\\n"
+      << "                     --new_ip 192.168.1.200 \\\n"
+      << "                     --mask 255.255.255.0 \\\n"
+      << "                     --gateway 192.168.1.1\n"
+      << "\n"
+      << "  [Force IP]\n"
+      << "    by MAC:  ros2 run orbbec_camera ip_config_tool -- \\\n"
+      << "             force_ip \\\n"
+      << "             --force_ip_mac 54:14:FD:06:07:DA \\\n"
+      << "             --new_ip 192.168.1.200 \\\n"
+      << "             --mask 255.255.255.0 \\\n"
+      << "             --gateway 192.168.1.1\n"
+      << "\n"
+      << "  [Set DHCP Timeout]\n"
+      << "    Timeout: ros2 run orbbec_camera ip_config_tool -- \\\n"
+      << "             set_dhcp_timeout \\\n"
+      << "             --current_ip 192.168.1.10 \\\n"
+      << "             --timeout 10\n"
+      << "  [SDK Log]\n"
+      << "    Debug:   ros2 run orbbec_camera ip_config_tool -- \\\n"
+      << "             set_ip --current_ip 192.168.1.10 --enable_dhcp true "
+         "--enable_persistent_ip false \\\n"
+      << "             --sdk_log_level debug\n";
+}
+
+bool parseArgs(int argc, char **argv, CliArgs &args, std::string &error) {
+  for (int i = 1; i < argc; ++i) {
+    const std::string current = argv[i];
+
+    if (current == "-h" || current == "--help") {
+      args.help = true;
+      return true;
+    }
+    if (current == "set_ip" || current == "set-ip") {
+      if (args.operation != CliArgs::Operation::NONE) {
+        error = "Only one subcommand is allowed";
+        return false;
+      }
+      args.operation = CliArgs::Operation::SET_IP;
+      continue;
+    }
+    if (current == "force_ip" || current == "force-ip") {
+      if (args.operation != CliArgs::Operation::NONE) {
+        error = "Only one subcommand is allowed";
+        return false;
+      }
+      args.operation = CliArgs::Operation::FORCE_IP;
+      continue;
+    }
+    if (current == "set_dhcp_timeout" || current == "set-dhcp-timeout") {
+      if (args.operation != CliArgs::Operation::NONE) {
+        error = "Only one subcommand is allowed";
+        return false;
+      }
+      args.operation = CliArgs::Operation::SET_DHCP_TIMEOUT;
+      continue;
+    }
+
+    if (current.rfind("--enable_dhcp=", 0) == 0) {
+      if (!parseBool(current.substr(std::strlen("--enable_dhcp=")), args.dhcp)) {
+        error = "--enable_dhcp expects true/false";
+        return false;
+      }
+      args.dhcp_option_set = true;
+      continue;
+    }
+
+    if (current.rfind("--enable_persistent_ip=", 0) == 0) {
+      if (!parseBool(current.substr(std::strlen("--enable_persistent_ip=")), args.persistent_ip)) {
+        error = "--enable_persistent_ip expects true/false";
+        return false;
+      }
+      args.persistent_ip_option_set = true;
+      continue;
+    }
+    if (current == "--enable_persistent_ip") {
+      if (++i >= argc || !parseBool(argv[i], args.persistent_ip)) {
+        error = "--enable_persistent_ip expects true/false";
+        return false;
+      }
+      args.persistent_ip_option_set = true;
+      continue;
+    }
+    if (current == "--enable_dhcp") {
+      if (++i >= argc || !parseBool(argv[i], args.dhcp)) {
+        error = "--enable_dhcp expects true/false";
+        return false;
+      }
+      args.dhcp_option_set = true;
+      continue;
+    }
+
+    if (current.rfind("--current_ip=", 0) == 0) {
+      args.current_ip = current.substr(std::strlen("--current_ip="));
+      continue;
+    }
+    if (current == "--current_ip") {
+      if (++i >= argc) {
+        error = "--current_ip requires a value";
+        return false;
+      }
+      args.current_ip = argv[i];
+      continue;
+    }
+
+    if (current.rfind("--port=", 0) == 0) {
+      if (!parseInt(current.substr(std::strlen("--port=")), args.port)) {
+        error = "--port expects an integer";
+        return false;
+      }
+      continue;
+    }
+    if (current == "--port") {
+      if (++i >= argc || !parseInt(argv[i], args.port)) {
+        error = "--port expects an integer";
+        return false;
+      }
+      continue;
+    }
+
+    if (current.rfind("--new_ip=", 0) == 0) {
+      args.new_ip = current.substr(std::strlen("--new_ip="));
+      continue;
+    }
+    if (current == "--new_ip") {
+      if (++i >= argc) {
+        error = "--new_ip requires a value";
+        return false;
+      }
+      args.new_ip = argv[i];
+      continue;
+    }
+
+    if (current.rfind("--mask=", 0) == 0) {
+      args.mask = current.substr(std::strlen("--mask="));
+      continue;
+    }
+    if (current == "--mask") {
+      if (++i >= argc) {
+        error = "--mask requires a value";
+        return false;
+      }
+      args.mask = argv[i];
+      continue;
+    }
+
+    if (current.rfind("--gateway=", 0) == 0) {
+      args.gateway = current.substr(std::strlen("--gateway="));
+      continue;
+    }
+    if (current == "--gateway") {
+      if (++i >= argc) {
+        error = "--gateway requires a value";
+        return false;
+      }
+      args.gateway = argv[i];
+      continue;
+    }
+
+    if (current.rfind("--force_ip_mac=", 0) == 0) {
+      args.force_ip_mac = current.substr(std::strlen("--force_ip_mac="));
+      continue;
+    }
+    if (current == "--force_ip_mac") {
+      if (++i >= argc) {
+        error = "--force_ip_mac requires a value";
+        return false;
+      }
+      args.force_ip_mac = argv[i];
+      continue;
+    }
+
+    if (current.rfind("--timeout=", 0) == 0) {
+      if (!parseInt(current.substr(std::strlen("--timeout=")), args.dhcp_assign_ip_timeout)) {
+        error = "--timeout expects an integer";
+        return false;
+      }
+      args.dhcp_assign_ip_timeout_set = true;
+      continue;
+    }
+    if (current == "--timeout") {
+      if (++i >= argc || !parseInt(argv[i], args.dhcp_assign_ip_timeout)) {
+        error = "--timeout expects an integer";
+        return false;
+      }
+      args.dhcp_assign_ip_timeout_set = true;
+      continue;
+    }
+
+    if (current.rfind("--dhcp_assign_ip_timeout=", 0) == 0) {
+      if (!parseInt(current.substr(std::strlen("--dhcp_assign_ip_timeout=")),
+                    args.dhcp_assign_ip_timeout)) {
+        error = "--dhcp_assign_ip_timeout expects an integer";
+        return false;
+      }
+      args.dhcp_assign_ip_timeout_set = true;
+      continue;
+    }
+    if (current == "--dhcp_assign_ip_timeout") {
+      if (++i >= argc || !parseInt(argv[i], args.dhcp_assign_ip_timeout)) {
+        error = "--dhcp_assign_ip_timeout expects an integer";
+        return false;
+      }
+      args.dhcp_assign_ip_timeout_set = true;
+      continue;
+    }
+
+    if (current.rfind("--sdk_log_level=", 0) == 0) {
+      args.sdk_log_level = current.substr(std::strlen("--sdk_log_level="));
+      continue;
+    }
+    if (current == "--sdk_log_level") {
+      if (++i >= argc) {
+        error = "--sdk_log_level requires a value";
+        return false;
+      }
+      args.sdk_log_level = argv[i];
+      continue;
+    }
+
+    error = "Unknown argument: " + current;
+    return false;
+  }
+
+  if (args.operation == CliArgs::Operation::NONE) {
+    error = "Missing subcommand. Use one of: set_ip, force_ip, set_dhcp_timeout";
+    return false;
+  }
+  if (args.operation != CliArgs::Operation::SET_IP && args.persistent_ip_option_set) {
+    error = "--enable_persistent_ip is only supported by set_ip";
+    return false;
+  }
+  if (args.operation == CliArgs::Operation::FORCE_IP && args.force_ip_mac.empty()) {
+    error = "force_ip requires --force_ip_mac <mac>";
+    return false;
+  }
+  if (args.operation == CliArgs::Operation::SET_DHCP_TIMEOUT && !args.dhcp_assign_ip_timeout_set) {
+    error = "set_dhcp_timeout requires --timeout <seconds>";
+    return false;
+  }
+  const auto log_severity = orbbec_camera::obLogSeverityFromString(args.sdk_log_level);
+  if (log_severity == OBLogSeverity::OB_LOG_SEVERITY_OFF && args.sdk_log_level != "off" &&
+      args.sdk_log_level != "none") {
+    error = "--sdk_log_level expects one of: debug, info, warn, error, fatal, off";
+    return false;
+  }
+
+  return true;
+}
+
+bool enableFirmwareLog(const rclcpp::Logger &logger, const std::shared_ptr<ob::Device> &device) {
+  try {
+    device->enableFirmwareLog(true);
+    RCLCPP_INFO(logger, "Firmware log enabled.");
+    return true;
+  } catch (const ob::Error &e) {
+    RCLCPP_WARN(logger, "Failed to enable firmware log: %s",
+                orbbec_camera::formatObErrorWithStatus(e).c_str());
+  } catch (const std::exception &e) {
+    RCLCPP_WARN(logger, "Failed to enable firmware log: %s", e.what());
+  }
+  return false;
+}
+
+int main(int argc, char **argv) {
+  CliArgs args;
+  std::string parse_error;
+  if (!parseArgs(argc, argv, args, parse_error)) {
+    std::cerr << "Argument error: " << parse_error << std::endl;
+    printHelp();
+    return 1;
+  }
+  if (args.help) {
+    printHelp();
+    return 0;
+  }
+
+  rclcpp::init(argc, argv);
+  auto logger = rclcpp::get_logger("ip_config_tool");
+  bool firmware_log_enabled = false;
+
+  try {
+    const auto sdk_log_path =
+        orbbec_camera::configureObSdkLoggerForTool("ip_config_tool", args.sdk_log_level);
+    if (!sdk_log_path.empty()) {
+      RCLCPP_INFO(logger, "SDK file log enabled: %s", sdk_log_path.c_str());
+    }
+    auto context = std::make_shared<ob::Context>();
+
+    if (args.operation == CliArgs::Operation::SET_IP) {
+      RCLCPP_INFO(logger, "Connecting to device %s:%d ...", args.current_ip.c_str(), args.port);
+      auto device = context->createNetDevice(args.current_ip.c_str(), args.port);
+      if (isSdkLogEnabled(args.sdk_log_level)) {
+        firmware_log_enabled = enableFirmwareLog(logger, device);
+      }
+
+      const bool v2_supported =
+          device->isPropertySupported(OB_STRUCT_DEVICE_IP_ADDR_CONFIG_V2, OB_PERMISSION_READ_WRITE);
+
+      if (v2_supported) {
+        // V2 supports enabling DHCP and persistent IP independently.
+        uint8_t address[4] = {0};
+        uint8_t mask[4] = {0};
+        uint8_t gateway[4] = {0};
+        if (args.persistent_ip && !parseIpString(args.new_ip, address)) {
+          RCLCPP_ERROR(logger, "Invalid new_ip format: %s", args.new_ip.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (args.persistent_ip && !parseIpString(args.mask, mask)) {
+          RCLCPP_ERROR(logger, "Invalid mask format: %s", args.mask.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (args.persistent_ip && !parseIpString(args.gateway, gateway)) {
+          RCLCPP_ERROR(logger, "Invalid gateway format: %s", args.gateway.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+
+        OBNetIpConfigV2 ip_config_v2{};
+        uint32_t data_size = sizeof(ip_config_v2);
+        device->getStructuredData(OB_STRUCT_DEVICE_IP_ADDR_CONFIG_V2,
+                                  reinterpret_cast<uint8_t *>(&ip_config_v2), &data_size);
+        if (args.dhcp) {
+          ip_config_v2.flags = static_cast<uint16_t>(ip_config_v2.flags | OB_NET_IP_FLAG_DHCP);
+        } else {
+          ip_config_v2.flags = static_cast<uint16_t>(ip_config_v2.flags & ~OB_NET_IP_FLAG_DHCP);
+        }
+        if (args.persistent_ip) {
+          ip_config_v2.flags =
+              static_cast<uint16_t>(ip_config_v2.flags | OB_NET_IP_FLAG_PERSISTENT);
+          std::memcpy(ip_config_v2.address, address, sizeof(address));
+          std::memcpy(ip_config_v2.mask, mask, sizeof(mask));
+          std::memcpy(ip_config_v2.gateway, gateway, sizeof(gateway));
+        } else {
+          ip_config_v2.flags =
+              static_cast<uint16_t>(ip_config_v2.flags & ~OB_NET_IP_FLAG_PERSISTENT);
+        }
+
+        RCLCPP_INFO(logger, "Applying set-ip configuration with V2 property (1088)...");
+        device->setStructuredData(OB_STRUCT_DEVICE_IP_ADDR_CONFIG_V2,
+                                  reinterpret_cast<const uint8_t *>(&ip_config_v2),
+                                  sizeof(ip_config_v2));
+
+        RCLCPP_INFO(logger, "Set-ip configuration applied successfully (V2).");
+        RCLCPP_INFO(logger, "Set-ip target flags: %u.", ip_config_v2.flags);
+        RCLCPP_INFO(logger, "Set-ip target DHCP: %s.", args.dhcp ? "enabled" : "disabled");
+        RCLCPP_INFO(logger, "Set-ip target persistent IP: %s.",
+                    args.persistent_ip ? "enabled" : "disabled");
+        RCLCPP_INFO(logger, "Set-ip target persistent IP: %d.%d.%d.%d", ip_config_v2.address[0],
+                    ip_config_v2.address[1], ip_config_v2.address[2], ip_config_v2.address[3]);
+        RCLCPP_INFO(logger, "Set-ip target mask: %d.%d.%d.%d", ip_config_v2.mask[0],
+                    ip_config_v2.mask[1], ip_config_v2.mask[2], ip_config_v2.mask[3]);
+        RCLCPP_INFO(logger, "Set-ip target gateway: %d.%d.%d.%d", ip_config_v2.gateway[0],
+                    ip_config_v2.gateway[1], ip_config_v2.gateway[2], ip_config_v2.gateway[3]);
+      } else {
+        OBNetIpConfig ip_config{};
+        uint32_t data_size = sizeof(ip_config);
+        device->getStructuredData(OB_STRUCT_DEVICE_IP_ADDR_CONFIG,
+                                  reinterpret_cast<uint8_t *>(&ip_config), &data_size);
+        if (args.dhcp == args.persistent_ip) {
+          RCLCPP_ERROR(logger,
+                       "Legacy IP config (1041) supports mutually exclusive DHCP and persistent "
+                       "IP only. Use --enable_dhcp true --enable_persistent_ip false or "
+                       "--enable_dhcp false --enable_persistent_ip true.");
+          rclcpp::shutdown();
+          return 1;
+        }
+        ip_config.dhcp = args.dhcp ? 1 : 0;
+        uint8_t address[4] = {0};
+        uint8_t mask[4] = {0};
+        uint8_t gateway[4] = {0};
+        if (args.persistent_ip && !parseIpString(args.new_ip, address)) {
+          RCLCPP_ERROR(logger, "Invalid new_ip format: %s", args.new_ip.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (args.persistent_ip && !parseIpString(args.mask, mask)) {
+          RCLCPP_ERROR(logger, "Invalid mask format: %s", args.mask.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (args.persistent_ip && !parseIpString(args.gateway, gateway)) {
+          RCLCPP_ERROR(logger, "Invalid gateway format: %s", args.gateway.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (args.persistent_ip) {
+          std::memcpy(ip_config.address, address, sizeof(address));
+          std::memcpy(ip_config.mask, mask, sizeof(mask));
+          std::memcpy(ip_config.gateway, gateway, sizeof(gateway));
+        }
+
+        RCLCPP_WARN(
+            logger,
+            "Device does not support IP config V2 (1088), fallback to legacy property (1041).");
+
+        RCLCPP_INFO(logger, "Applying set-ip configuration...");
+        device->setStructuredData(OB_STRUCT_DEVICE_IP_ADDR_CONFIG,
+                                  reinterpret_cast<const uint8_t *>(&ip_config), sizeof(ip_config));
+
+        RCLCPP_INFO(logger, "Set-ip configuration applied successfully.");
+        RCLCPP_INFO(logger, "Set-ip target mode: %s (dhcp=%u).",
+                    ip_config.dhcp ? "DHCP" : "persistent", ip_config.dhcp);
+        RCLCPP_INFO(logger, "Set-ip target DHCP: %s.", args.dhcp ? "enabled" : "disabled");
+        RCLCPP_INFO(logger, "Set-ip target persistent IP: %s.",
+                    args.persistent_ip ? "enabled" : "disabled");
+        RCLCPP_INFO(logger, "Set-ip target persistent IP: %d.%d.%d.%d", ip_config.address[0],
+                    ip_config.address[1], ip_config.address[2], ip_config.address[3]);
+        RCLCPP_INFO(logger, "Set-ip target mask: %d.%d.%d.%d", ip_config.mask[0], ip_config.mask[1],
+                    ip_config.mask[2], ip_config.mask[3]);
+        RCLCPP_INFO(logger, "Set-ip target gateway: %d.%d.%d.%d", ip_config.gateway[0],
+                    ip_config.gateway[1], ip_config.gateway[2], ip_config.gateway[3]);
+      }
+    }
+
+    if (args.operation == CliArgs::Operation::FORCE_IP) {
+      OBNetIpConfig ip_config{};
+      ip_config.dhcp = args.dhcp ? 1 : 0;
+
+      if (!args.dhcp) {
+        if (!parseIpString(args.new_ip, ip_config.address)) {
+          RCLCPP_ERROR(logger, "Invalid new_ip format: %s", args.new_ip.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (!parseIpString(args.mask, ip_config.mask)) {
+          RCLCPP_ERROR(logger, "Invalid mask format: %s", args.mask.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+        if (!parseIpString(args.gateway, ip_config.gateway)) {
+          RCLCPP_ERROR(logger, "Invalid gateway format: %s", args.gateway.c_str());
+          rclcpp::shutdown();
+          return 1;
+        }
+      }
+
+      RCLCPP_INFO(logger, "Applying force-ip to MAC %s ...", args.force_ip_mac.c_str());
+      if (context->forceIp(args.force_ip_mac.c_str(), ip_config)) {
+        RCLCPP_INFO(logger, "Force-ip operation applied successfully.");
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        if (args.dhcp) {
+          RCLCPP_INFO(logger, "Force-ip target mode: DHCP.");
+        } else {
+          RCLCPP_INFO(logger, "Force-ip target persistent IP: %s", args.new_ip.c_str());
+          RCLCPP_INFO(logger, "Force-ip target mask: %s", args.mask.c_str());
+          RCLCPP_INFO(logger, "Force-ip target gateway: %s", args.gateway.c_str());
+        }
+      } else {
+        RCLCPP_ERROR(logger, "Force-ip failed (SDK returned false).");
+        rclcpp::shutdown();
+        return 1;
+      }
+    }
+
+    if (args.operation == CliArgs::Operation::SET_DHCP_TIMEOUT) {
+      RCLCPP_INFO(logger, "Connecting to device %s:%d ...", args.current_ip.c_str(), args.port);
+      auto device = context->createNetDevice(args.current_ip.c_str(), args.port);
+      if (isSdkLogEnabled(args.sdk_log_level)) {
+        firmware_log_enabled = enableFirmwareLog(logger, device);
+      }
+
+      if (!device->isPropertySupported(OB_PROP_DHCP_ASSIGN_IP_TIMEOUT_INT, OB_PERMISSION_WRITE)) {
+        RCLCPP_ERROR(logger, "Current device or firmware does not support DHCP assign IP timeout");
+        rclcpp::shutdown();
+        return 1;
+      }
+
+      auto range = device->getIntPropertyRange(OB_PROP_DHCP_ASSIGN_IP_TIMEOUT_INT);
+      if (args.dhcp_assign_ip_timeout < range.min || args.dhcp_assign_ip_timeout > range.max) {
+        RCLCPP_ERROR(logger, "Timeout %d is out of range [%d, %d]", args.dhcp_assign_ip_timeout,
+                     range.min, range.max);
+        rclcpp::shutdown();
+        return 1;
+      }
+
+      device->setIntProperty(OB_PROP_DHCP_ASSIGN_IP_TIMEOUT_INT, args.dhcp_assign_ip_timeout);
+      const int current_timeout = device->getIntProperty(OB_PROP_DHCP_ASSIGN_IP_TIMEOUT_INT);
+      RCLCPP_INFO(logger, "DHCP assign IP timeout applied successfully: %d second(s)",
+                  current_timeout);
+    }
+
+    if (firmware_log_enabled) {
+      waitForFirmwareLogDrain(logger);
+    }
+
+  } catch (ob::Error &e) {
+    RCLCPP_ERROR(logger, "ip_config_tool: %s", orbbec_camera::formatObErrorWithStatus(e).c_str());
+    rclcpp::shutdown();
+    return 1;
+  } catch (const std::exception &e) {
+    RCLCPP_ERROR(logger, "ip_config_tool: %s", e.what());
+    rclcpp::shutdown();
+    return 1;
+  } catch (...) {
+    RCLCPP_ERROR(logger, "ip_config_tool: unknown error");
+    rclcpp::shutdown();
+    return 1;
+  }
+
+  rclcpp::shutdown();
+  return 0;
+}

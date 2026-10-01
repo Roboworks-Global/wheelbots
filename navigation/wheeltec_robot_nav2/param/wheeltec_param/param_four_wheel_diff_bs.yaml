@@ -20,7 +20,7 @@ amcl:
     max_beams: 60
     max_particles: 2000
     min_particles: 500
-    odom_frame_id: "odom_combined"
+    odom_frame_id: "odom"
     pf_err: 0.02
     pf_z: 0.85
     recovery_alpha_fast: 0.0
@@ -59,7 +59,7 @@ bt_navigator:
     use_sim_time: False
     global_frame: map
     robot_base_frame: base_footprint
-    odom_topic: /odom_combined
+    odom_topic: /odometry/filtered
     bt_loop_duration: 10
     default_server_timeout: 20
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
@@ -196,7 +196,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: odom_combined
+      global_frame: odom
       robot_base_frame: base_footprint
       use_sim_time: False
       rolling_window: true
@@ -333,7 +333,7 @@ behavior_server:
       plugin: "nav2_behaviors/DriveOnHeading"
     wait:
       plugin: "nav2_behaviors/Wait"
-    global_frame: odom_combined
+    global_frame: odom
     robot_base_frame: base_footprint
     transform_tolerance: 0.1
     use_sim_time: False

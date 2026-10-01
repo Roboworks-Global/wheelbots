@@ -24,7 +24,7 @@ def generate_launch_description():
             
     wheeltec_robot = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'base_serial.launch.py')),
-            launch_arguments={'akmcar': 'false'}.items(),
+            launch_arguments={'akmcar': 'true'}.items(),
     )
     #choose your car,the default car is mini_mec 
     choose_car = IncludeLaunchDescription(
@@ -47,10 +47,9 @@ def generate_launch_description():
 
     robot_ekf = launch_ros.actions.Node(
             condition=UnlessCondition(carto_slam),
-            package='robot_localization', 
-            executable='ekf_node', 
+            package='robot_localization',
+            executable='ekf_node',
             parameters=[ekf_config],
-            remappings=[("odometry/filtered", "odom_combined")]
             )
                               
     joint_state_publisher_node = launch_ros.actions.Node(

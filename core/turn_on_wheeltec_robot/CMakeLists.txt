@@ -69,7 +69,10 @@ ament_target_dependencies(parameter_node rclcpp)
 #add_executable(testNode src/test.cpp src/Quaternion_Solution.cpp)
 #ament_target_dependencies(testNode rclcpp std_msgs nav_msgs std_srvs sensor_msgs ackermann_msgs serial wheeltec_robot_msg)
 
-install(PROGRAMS scripts/cmd_vel_to_ackermann_drive.py DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS
+  scripts/cmd_vel_to_ackermann_drive.py
+  scripts/odom_scaler.py
+  DESTINATION lib/${PROJECT_NAME})
 
 install(TARGETS
 wheeltec_robot_node

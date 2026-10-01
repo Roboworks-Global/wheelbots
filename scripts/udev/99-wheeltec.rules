@@ -1,0 +1,13 @@
+# Wheeltec rosbot2 mini_akm — CP2102 USB-serial devices.
+# The two CP2102 bridges on the robot are programmed with distinct serial
+# numbers so we can bind stable /dev symlinks regardless of enumeration order.
+#
+#   ATTRS{serial}=="0002"  ->  STM32 base board (odom, IMU, motor cmd @ 115200)
+#   ATTRS{serial}=="0001"  ->  Leishen LSLiDAR M10 (2D scan @ 460800)
+#
+# MODE:="0666" mirrors the stock Wheeltec convention (their upstream script
+# sets 0777) and avoids adding users to the dialout group. Tighten to 0660
+# GROUP:="dialout" if you prefer, and `sudo usermod -aG dialout <user>`.
+
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="0002", MODE:="0666", GROUP:="dialout", SYMLINK+="wheeltec_controller"
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="0001", MODE:="0666", GROUP:="dialout", SYMLINK+="wheeltec_laser"

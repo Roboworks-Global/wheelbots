@@ -61,7 +61,7 @@ void SlamGmapping::init() {
     throttle_scans_ = 1;
     base_frame_ = "base_footprint";//base_link
     map_frame_ = "map";
-    odom_frame_ = "odom_combined";
+    odom_frame_ = "odom";
     transform_publish_period_ = 0.05;
 
     map_update_interval_ = tf2::durationFromSec(0.5);

@@ -29,6 +29,6 @@ def generate_launch_description():
             executable='sync_slam_toolbox_node',
             name='slam_toolbox',
             output='screen',
-            remappings=[('odom','odom_combined')]
+            remappings=[('odom','odometry/filtered')]
         )
     ])

@@ -1,5 +1,0 @@
-string box_colour
----
-geometry_msgs/PoseStamped box_pickup_position
----
-#feedback

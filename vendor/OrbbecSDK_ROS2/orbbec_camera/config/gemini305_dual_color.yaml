@@ -1,0 +1,34 @@
+# Gemini 305 dual-color preset. Other parameters inherit gemini_301_series.launch.py.
+device_preset: Dual Color Streams
+
+# left color
+enable_left_color: true
+left_color_width: 0
+left_color_height: 0
+left_color_fps: 0
+left_color_format: ANY
+left_color_qos: default
+left_color_camera_info_qos: default
+left_color_rotation: -1
+left_color_flip: false
+left_color_mirror: false
+enable_left_color_decimation_filter: false
+left_color_decimation_filter_scale: -1
+enable_left_color_undistortion: false
+left_color.image_raw.enable_pub_plugins: ["image_transport/compressed", "image_transport/raw", "image_transport/theora"]
+
+# right color
+enable_right_color: true
+right_color_width: 0
+right_color_height: 0
+right_color_fps: 0
+right_color_format: ANY
+right_color_qos: default
+right_color_camera_info_qos: default
+right_color_rotation: -1
+right_color_flip: false
+right_color_mirror: false
+enable_right_color_decimation_filter: false
+right_color_decimation_filter_scale: -1
+enable_right_color_undistortion: false
+right_color.image_raw.enable_pub_plugins: ["image_transport/compressed", "image_transport/raw", "image_transport/theora"]

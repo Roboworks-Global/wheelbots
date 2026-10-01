@@ -20,7 +20,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.125 ', '0', '0.1608','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.125 ', '0', '0.1608','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -40,7 +40,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.26 ', '0', '0.228','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.26 ', '0', '0.228','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -58,7 +58,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.53 ', '0', '0.228','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.53 ', '0', '0.228','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -76,7 +76,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.497 ', '0', '0.228','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.497 ', '0', '0.228','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -96,7 +96,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.048 ', '0', '0.18','0', '0','0','base_footprint','laser'],),
+            arguments=['0.048 ', '0', '0.18','0', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -114,7 +114,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.1 ', '0', '0.165','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.1 ', '0', '0.165','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -132,7 +132,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.165 ', '0', '0.235','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.165 ', '0', '0.235','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -150,7 +150,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.155 ', '0', '0.195','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.155 ', '0', '0.195','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -168,7 +168,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.155 ', '0', '0.195','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.155 ', '0', '0.195','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -186,7 +186,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.207 ', '0', '0.228','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.207 ', '0', '0.228','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -204,7 +204,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.267  ', '0', '0.228','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.267  ', '0', '0.228','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -221,7 +221,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.267  ', '0', '0.228','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.267  ', '0', '0.228','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -240,7 +240,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.0  ', '0', '0.17','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.0  ', '0', '0.17','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -258,7 +258,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.087  ', '0', '0.23','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.087  ', '0', '0.23','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -276,7 +276,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.149  ', '0', '0.23','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.149  ', '0', '0.23','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -296,7 +296,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -315,7 +315,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.031', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.031', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -334,7 +334,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -352,7 +352,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -370,7 +370,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -387,7 +387,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -404,7 +404,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -421,7 +421,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.02', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -440,7 +440,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.031', '0', '0.155','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.031', '0', '0.155','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -458,7 +458,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.087', '0', '0.195','3.1415', '0','0','base_footprint','laser'],),
+            arguments=['0.087', '0', '0.195','3.1415', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -476,7 +476,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.157', '0', '0.385','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.157', '0', '0.385','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -495,7 +495,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -513,7 +513,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -532,7 +532,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -551,7 +551,7 @@ def generate_launch_description():
             package='tf2_ros', 
             executable='static_transform_publisher', 
             name='base_to_laser',
-            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser'],),
+            arguments=['0.272', '0', '0.257','3.14', '0','0','base_footprint','laser_link'],),
         launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -568,6 +568,6 @@ def generate_launch_description():
     #mini_tank,
     #mini_4wd,senior_4wd_bs_robot,senior_4wd_dl_robot,flagship_4wd_bs_robot,flagship_4wd_dl_robot,top_4wd_bs_robot,top_4wd_dl_robot
     #mini_diff, senior_diff_robot,four_wheel_diff_bs ,four_wheel_diff_dl, brushless_senior_diff,flagship_four_wheel_diff_bs_robot,flagship_four_wheel_diff_dl_robot
-    ld.add_action(senior_mec_bs)
+    ld.add_action(mini_akm)
     return ld
 
